@@ -3,37 +3,38 @@
   <head>
     <script type="text/javascript" src="vendor/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="lib/cpu.js"></script>
+    <style>
+      .pre {
+        white-space: pre;
+      }
+    </style>
   </head>
 
   <body>
 
     <div id="hexprogram">
-      <textarea id="hexinstructions">
-        
-      </textarea>
-      <input type="button" name="Run">
+      <textarea id="hexinstructions"></textarea>
+      <input id="run" type="button" value="Run">
     </div>
 
     <div id="registers">
       Registers:
-      <div id="registervalues">
-      </div>
+      <div id="registervalues" class="pre"></div>
     </div>
 
     <div id="memory">
       Memory:
-      <div id="memoryvalues">
-      </div>
+      <div id="memoryvalues" class="pre"></div>
     </div>
 
 
     <script type="text/javascript">
       $('document').ready(function() {
 
-        var instructions = [];
-        instructions.push(0x7c01); // SET A, next word (literal)
-        instructions.push(0x002d); // 45
-        instructions.push(0x0011); // SET B, A
+        var memory = [];
+        for (var i = 0; i < 32; i++) { // 32 words for now
+          memory.push(0x0);
+        }
 
         var getInstructions = function(element) {
           var text = element.val();
@@ -54,9 +55,25 @@
           });
         };
 
-        load(getInstructions($('hexinstructions')));
+        $('#run').click(function() {
+          load(getInstructions($('#hexinstructions')));
 
-        var cpu = new Cpu(memory);
+          var cpu = new Cpu(memory);
+          cpu.run(function(message) {
+            if (message == 'step') {
+              var text = '';
+              cpu.registers.forEach(function(registerValue, registerNumber) {
+                text += cpu.registerNames[registerNumber] + ': ' + registerValue + '\n';
+                $("#registervalues").html(text);
+              });
+              text = '';
+              memory.forEach(function(word) {
+                text += word.toString() + '\n';
+                $("#memoryvalues").html(text);
+              });
+            }
+          });
+        });
 
       });
     </script>
