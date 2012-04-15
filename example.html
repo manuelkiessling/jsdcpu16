@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="vendor/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="lib/cpu.js"></script>
+  </head>
+
+  <body>
+
+    <div id="hexprogram">
+      <textarea id="hexinstructions">
+        
+      </textarea>
+      <input type="button" name="Run">
+    </div>
+
+    <div id="registers">
+      Registers:
+      <div id="registervalues">
+      </div>
+    </div>
+
+    <div id="memory">
+      Memory:
+      <div id="memoryvalues">
+      </div>
+    </div>
+
+
+    <script type="text/javascript">
+      $('document').ready(function() {
+
+        var instructions = [];
+        instructions.push(0x7c01); // SET A, next word (literal)
+        instructions.push(0x002d); // 45
+        instructions.push(0x0011); // SET B, A
+
+        var getInstructions = function(element) {
+          var text = element.val();
+          var lines = text.split('\n');
+          var instructions = [];
+          lines.forEach(function(line) {
+            line = $.trim(line);
+            instructions.push(parseInt(line, 16));
+          });
+          return instructions;
+        };
+
+        var load = function(instructions) {
+          var adress = 0x0;
+          instructions.forEach(function(instruction) {
+            memory[adress] = instruction;
+            adress++;
+          });
+        };
+
+        load(getInstructions($('hexinstructions')));
+
+        var cpu = new Cpu(memory);
+
+      });
+    </script>
+  </body>
+</html>
