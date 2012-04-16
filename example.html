@@ -20,7 +20,8 @@
 002d
 91e1
 000f</textarea>
-      <input id="reset" type="button" value="Reset">
+      <input id="reset" type="button" value="Reset + load code">
+      <input id="step" type="button" value="Step">
       <input id="run" type="button" value="Run">
     </div>
 
@@ -53,8 +54,9 @@
           var text = '';
           cpu.registers.forEach(function(registerValue, registerNumber) {
             text += cpu.registerNames[registerNumber] + ': ' + pad(registerValue.toString(16), 4) + ' (0b' + pad(registerValue.toString(2), 16) + ', d' + registerValue.toString(10) + ')' + '\n';
-            $("#registervalues").html(text);
           });
+          text += 'PC: ' + cpu.PC;
+          $("#registervalues").html(text);
 
           text = '';
           var memoryBlockWritten = false;
@@ -81,7 +83,7 @@
             memoryBlockWritten = false;
           }
           $("#memoryvalues").html(text);
-        }
+        };
 
         wordsize = 0xFFFF;
         numberOfWords = 0x10000;
@@ -102,7 +104,7 @@
           return instructions;
         };
 
-        var load = function(instructions) {
+        var load = function(memory, instructions) {
           var address = 0x0;
           instructions.forEach(function(instruction) {
             memory.write(address, instruction);
@@ -115,14 +117,18 @@
           writtenMemoryBlocks = [];
           $("#registervalues").html('');
           $("#memoryvalues").html('');
+          load(memory, getInstructions($('#hexinstructions')));
+          cpu = new Cpu(memory, {
+            step: handleCpuStep
+          });
+        });
+
+        $('#step').click(function() {
+          cpu.step();
         });
 
         $('#run').click(function() {
-          load(getInstructions($('#hexinstructions')));
-          cpu = new Cpu(memory);
-          cpu.run({
-            step: handleCpuStep
-          });
+          cpu.run();
         });
 
       });
