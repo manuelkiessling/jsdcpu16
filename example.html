@@ -2,6 +2,8 @@
 <html>
   <head>
     <script type="text/javascript" src="vendor/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="lib/utility.js"></script>
+    <script type="text/javascript" src="lib/Memory.js"></script>
     <script type="text/javascript" src="lib/cpu.js"></script>
     <style>
       .pre {
@@ -14,7 +16,10 @@
   <body>
 
     <div id="hexprogram">
-      <textarea id="hexinstructions"></textarea>
+      <textarea id="hexinstructions">7c01
+002d
+91e1
+000f</textarea>
       <input id="run" type="button" value="Run">
     </div>
 
@@ -32,10 +37,20 @@
     <script type="text/javascript">
       $('document').ready(function() {
 
-        var memory = [];
-        for (var i = 0; i < 32; i++) { // 32 words for now
-          memory.push(0x0000);
-        }
+        var handleMemoryRead = function(address, value) {};
+
+        var writtenMemoryBlocks = [];
+        var handleMemoryWrite = function(address, value) {
+          writtenMemoryBlocks[address] = value;
+        };
+
+        var wordsize = 0xFFFF;
+        var numberOfWords = 0x10000;
+
+        var memory = new Memory(numberOfWords, wordsize, {
+          read: handleMemoryRead,
+          write: handleMemoryWrite
+        });
 
         var getInstructions = function(element) {
           var text = element.val();
@@ -49,10 +64,10 @@
         };
 
         var load = function(instructions) {
-          var adress = 0x0;
+          var address = 0x0;
           instructions.forEach(function(instruction) {
-            memory[adress] = instruction;
-            adress++;
+            memory.write(address, instruction);
+            address++;
           });
         };
 
@@ -62,23 +77,38 @@
           var cpu = new Cpu(memory);
           cpu.run(function(message) {
             if (message == 'step') {
+
               var text = '';
               cpu.registers.forEach(function(registerValue, registerNumber) {
-                text += cpu.registerNames[registerNumber] + ': ' + registerValue + '\n';
+                text += cpu.registerNames[registerNumber] + ': ' + pad(registerValue.toString(16), 4) + ' (0b' + pad(registerValue.toString(2), 16) + ', d' + registerValue.toString(10) + ')' + '\n';
                 $("#registervalues").html(text);
               });
+
               text = '';
-              var i = 0;
-              memory.forEach(function(word) {
-                text += word.toString() + ' ';
-                if (i === 7) {
-                  text += '\n';
-                  i = 0;
-                } else {
-                  i++;
+              var memoryBlockWritten = false;
+              for (var j = 0; j < numberOfWords / 8; j = j + 8) {
+                for (var i = 0; i < 8; i++) {
+                  if (writtenMemoryBlocks[j + i] > 0) {
+                    memoryBlockWritten = true;
+                  }
                 }
-                $("#memoryvalues").html(text);
-              });
+                if (memoryBlockWritten) {
+                  text += '<b>' + pad(j.toString(16), 4) + ': </b>';
+                  for (var i = 0; i < 8; i++) {
+                    if (memory.read(j + i) > 0) {
+                      text += '<b>';
+                    }
+                    text += pad(memory.read(j + i).toString(16), 4);
+                    if (memory.read(j + i) > 0) {
+                      text += '</b>';
+                    }
+                    text += ' ';
+                  }
+                  text += '\n';
+                }
+                memoryBlockWritten = false;
+              }
+              $("#memoryvalues").html(text);
             }
           });
         });
