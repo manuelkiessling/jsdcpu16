@@ -5,6 +5,7 @@
     <script type="text/javascript" src="lib/cpu.js"></script>
     <style>
       .pre {
+        font-family: "Courier New";
         white-space: pre;
       }
     </style>
@@ -41,7 +42,7 @@
           var lines = text.split('\n');
           var instructions = [];
           lines.forEach(function(line) {
-            line = $.trim(line);
+            line = line.trim();
             instructions.push(parseInt(line, 16));
           });
           return instructions;
@@ -67,8 +68,15 @@
                 $("#registervalues").html(text);
               });
               text = '';
+              var i = 0;
               memory.forEach(function(word) {
-                text += word.toString() + '\n';
+                text += word.toString() + ' ';
+                if (i === 7) {
+                  text += '\n';
+                  i = 0;
+                } else {
+                  i++;
+                }
                 $("#memoryvalues").html(text);
               });
             }
