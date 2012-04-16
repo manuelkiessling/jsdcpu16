@@ -20,6 +20,7 @@
 002d
 91e1
 000f</textarea>
+      <input id="reset" type="button" value="Reset">
       <input id="run" type="button" value="Run">
     </div>
 
@@ -36,6 +37,10 @@
 
     <script type="text/javascript">
       $('document').ready(function() {
+        var cpu;
+        var memory;
+        var wordsize;
+        var numberOfWords;
 
         var handleMemoryRead = function(address, value) {};
 
@@ -44,10 +49,44 @@
           writtenMemoryBlocks[address] = value;
         };
 
-        var wordsize = 0xFFFF;
-        var numberOfWords = 0x10000;
+        var handleCpuStep = function() {
+          var text = '';
+          cpu.registers.forEach(function(registerValue, registerNumber) {
+            text += cpu.registerNames[registerNumber] + ': ' + pad(registerValue.toString(16), 4) + ' (0b' + pad(registerValue.toString(2), 16) + ', d' + registerValue.toString(10) + ')' + '\n';
+            $("#registervalues").html(text);
+          });
 
-        var memory = new Memory(numberOfWords, wordsize, {
+          text = '';
+          var memoryBlockWritten = false;
+          for (var j = 0; j < numberOfWords / 8; j = j + 8) {
+            for (var i = 0; i < 8; i++) {
+              if (writtenMemoryBlocks[j + i] > 0) {
+                memoryBlockWritten = true;
+              }
+            }
+            if (memoryBlockWritten) {
+              text += '<b>' + pad(j.toString(16), 4) + ': </b>';
+              for (var i = 0; i < 8; i++) {
+                if (memory.read(j + i) > 0) {
+                  text += '<b title="' + '0b' + pad(memory.read(j + i).toString(2), 16) + ', d' + memory.read(j + i).toString(10) + '">';
+                }
+                text += pad(memory.read(j + i).toString(16), 4);
+                if (memory.read(j + i) > 0) {
+                  text += '</b>';
+                }
+                text += ' ';
+              }
+              text += '\n';
+            }
+            memoryBlockWritten = false;
+          }
+          $("#memoryvalues").html(text);
+        }
+
+        wordsize = 0xFFFF;
+        numberOfWords = 0x10000;
+
+        memory = new Memory(numberOfWords, wordsize, {
           read: handleMemoryRead,
           write: handleMemoryWrite
         });
@@ -71,45 +110,18 @@
           });
         };
 
+        $('#reset').click(function() {
+          memory.reset();
+          writtenMemoryBlocks = [];
+          $("#registervalues").html('');
+          $("#memoryvalues").html('');
+        });
+
         $('#run').click(function() {
           load(getInstructions($('#hexinstructions')));
-
-          var cpu = new Cpu(memory);
-          cpu.run(function(message) {
-            if (message == 'step') {
-
-              var text = '';
-              cpu.registers.forEach(function(registerValue, registerNumber) {
-                text += cpu.registerNames[registerNumber] + ': ' + pad(registerValue.toString(16), 4) + ' (0b' + pad(registerValue.toString(2), 16) + ', d' + registerValue.toString(10) + ')' + '\n';
-                $("#registervalues").html(text);
-              });
-
-              text = '';
-              var memoryBlockWritten = false;
-              for (var j = 0; j < numberOfWords / 8; j = j + 8) {
-                for (var i = 0; i < 8; i++) {
-                  if (writtenMemoryBlocks[j + i] > 0) {
-                    memoryBlockWritten = true;
-                  }
-                }
-                if (memoryBlockWritten) {
-                  text += '<b>' + pad(j.toString(16), 4) + ': </b>';
-                  for (var i = 0; i < 8; i++) {
-                    if (memory.read(j + i) > 0) {
-                      text += '<b>';
-                    }
-                    text += pad(memory.read(j + i).toString(16), 4);
-                    if (memory.read(j + i) > 0) {
-                      text += '</b>';
-                    }
-                    text += ' ';
-                  }
-                  text += '\n';
-                }
-                memoryBlockWritten = false;
-              }
-              $("#memoryvalues").html(text);
-            }
+          cpu = new Cpu(memory);
+          cpu.run({
+            step: handleCpuStep
           });
         });
 
