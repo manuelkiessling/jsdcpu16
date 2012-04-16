@@ -10,6 +10,9 @@
         font-family: "Courier New";
         white-space: pre;
       }
+      .currentinstruction {
+        text-decoration: underline;
+      }
     </style>
   </head>
 
@@ -69,12 +72,18 @@
             if (memoryBlockWritten) {
               text += '<b>' + pad(j.toString(16), 4) + ': </b>';
               for (var i = 0; i < 8; i++) {
+                if (cpu.PC === (j + i)) {
+                  text += '<span class="currentinstruction">';
+                }
                 if (memory.read(j + i) > 0) {
                   text += '<b title="' + '0b' + pad(memory.read(j + i).toString(2), 16) + ', d' + memory.read(j + i).toString(10) + '">';
                 }
                 text += pad(memory.read(j + i).toString(16), 4);
                 if (memory.read(j + i) > 0) {
                   text += '</b>';
+                }
+                if (cpu.PC === (j + i)) {
+                  text += '</span>';
                 }
                 text += ' ';
               }
