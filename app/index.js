@@ -23,26 +23,26 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu'], function(utility, Memo
 
     text = '';
     var memoryBlockWritten = false;
-    for (var j = 0; j < numberOfWords / 8; j = j + 8) {
+    for (var j = 0; j < numberOfWords / 8; j++) {
       for (var i = 0; i < 8; i++) {
-        if (writtenMemoryBlocks[j + i] > 0) {
+        if (writtenMemoryBlocks[(j * 8) + i] > 0) {
           memoryBlockWritten = true;
         }
       }
       if (memoryBlockWritten) {
-        text += '<b>' + utility.pad(j.toString(16), 4) + ': </b>';
+        text += '<b>' + utility.pad((j * 8).toString(16), 4) + ': </b>';
         for (var i = 0; i < 8; i++) {
-          if (cpu.registers[0x1c] === (j + i)) {
+          if (cpu.registers[0x1c] === ((j * 8) + i)) {
             text += '<span class="currentinstruction">';
           }
-          if (memory.read(j + i) > 0) {
-            text += '<b title="' + '0b' + utility.pad(memory.read(j + i).toString(2), 16) + ', d' + memory.read(j + i).toString(10) + '">';
+          if (memory.read((j * 8) + i) > 0) {
+            text += '<b title="' + '0b' + utility.pad(memory.read((j * 8) + i).toString(2), 16) + ', d' + memory.read((j * 8) + i).toString(10) + '">';
           }
-          text += utility.pad(memory.read(j + i).toString(16), 4);
-          if (memory.read(j + i) > 0) {
+          text += utility.pad(memory.read((j * 8) + i).toString(16), 4);
+          if (memory.read((j * 8) + i) > 0) {
             text += '</b>';
           }
-          if (cpu.registers[0x1c] === (j + i)) {
+          if (cpu.registers[0x1c] === ((j * 8) + i)) {
             text += '</span>';
           }
           text += ' ';
