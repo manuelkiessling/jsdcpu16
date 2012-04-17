@@ -14,9 +14,11 @@
       .currentinstruction {
         text-decoration: underline;
       }
-      #hexprogram {
+      #hexprogram, #registers, #memory, #console {
         float: left;
         margin: 20px;
+      }
+      #hexprogram {
         width: 150px;
       }
       #hexinstructions {
@@ -24,14 +26,20 @@
         height: 200px;
       }
       #registers {
-        float: left;
-        margin: 20px;
         width: 360px;
       }
       #memory {
-        float: left;
-        margin: 20px;
         width: 440px;
+      }
+      #console {
+        width: 320px;
+      }
+      #consoleoutput {
+        background-color: #002200;
+        color: #00ee00;
+        padding: 4px;
+        height: 320px;
+        width: 320px;
       }
     </style>
   </head>
@@ -40,10 +48,52 @@
 
     <div id="hexprogram">
       Hex instructions:<br>
-      <textarea id="hexinstructions">7c01
-002d
-91e1
-000f</textarea>
+      <textarea id="hexinstructions">7de1
+8000
+0048
+7de1
+8001
+0065
+7de1
+8002
+006c
+7de1
+8003
+006c
+7de1
+8004
+006f
+7de1
+8005
+002c
+7de1
+8006
+0020
+7de1
+8007
+0077
+7de1
+8008
+006f
+7de1
+8009
+0072
+7de1
+800a
+006c
+7de1
+800b
+0064
+7de1
+800c
+0021
+7dc1
+0029
+7de1
+1000
+fff0
+7dc1
+1000</textarea>
       <br>
       <input id="reset" type="button" value="Reset + load code">
       <input id="step" type="button" value="Step">
@@ -59,6 +109,12 @@
     <div id="memory">
       Memory:
       <div id="memoryvalues" class="pre"></div>
+    </div>
+
+    <div id="console">
+      Console (32x16):
+      <div id="consoleoutput" class="pre"></div>
+      (write ASCII to 0x8000-0x8200)
     </div>
   </body>
 </html>

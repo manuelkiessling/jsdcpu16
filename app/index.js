@@ -1,6 +1,6 @@
 "use strict";
 
-define(['../lib/utility', '../lib/Memory', '../lib/Cpu'], function(utility, Memory, Cpu) {
+define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './console'], function(utility, Memory, Cpu, console) {
 
   var cpu;
   var memory;
@@ -12,6 +12,9 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu'], function(utility, Memo
   var writtenMemoryBlocks = [];
   var handleMemoryWrite = function(address, value) {
     writtenMemoryBlocks[address] = value;
+    if (address >= 0x8000 && address <= 0x8400) {
+      console.draw($('#consoleoutput'), memory, 0x8000);
+    }
   };
 
   var handleCpuStep = function() {
@@ -88,6 +91,7 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu'], function(utility, Memo
       cpu.stop();
     }
     memory.reset();
+    console.draw($('#consoleoutput'), memory, 0x8000);
     writtenMemoryBlocks = [];
     $("#registervalues").html('');
     $("#memoryvalues").html('');
