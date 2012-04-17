@@ -83,7 +83,7 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu'], function(utility, Memo
     });
   };
 
-  $('#reset').click(function() {
+  var reset = function() {
     memory.reset();
     writtenMemoryBlocks = [];
     $("#registervalues").html('');
@@ -92,6 +92,11 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu'], function(utility, Memo
     cpu = new Cpu(memory, {
       step: handleCpuStep
     });
+    handleCpuStep();
+  };
+
+  $('#reset').click(function() {
+    reset();
   });
 
   $('#step').click(function() {
@@ -101,5 +106,7 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu'], function(utility, Memo
   $('#run').click(function() {
     cpu.run();
   });
+
+  reset();
 
 });
