@@ -251,4 +251,24 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
     });
   });
 
+  
+  describe('Stack pointer', function() {
+    it('works as expected', function() {
+      var cpu = setupCpu([
+        0xa9a1,   // SET PUSH, 10
+        0xa5a1,   // SET PUSH, 9
+        0xa1a1,   // SET PUSH, 8
+        0x6001,   // SET A, POP
+        0x6411,   // SET B, PEEK
+        0x6411    // SET B, PEEK
+      ]);
+      for (var i = 0; i < 6; i++) {
+        cpu.step();
+      }
+      expect(cpu.registers[0x00]).toEqual(0x0008);
+      expect(cpu.registers[0x01]).toEqual(0x0009);
+      expect(cpu.registers[0x1b]).toEqual(0xfffd); // SP is 0x0000 - 3
+    });
+  });
+
 });
