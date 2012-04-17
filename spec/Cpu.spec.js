@@ -68,4 +68,31 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
     });
   });
 
+  describe('SUB', function() {
+    it('correctly substracts the value of a register from the value of another register', function() {
+      var cpu = setupCpu([
+        0x8c01,   // SET A, 3
+        0x9411,   // SET B, 5
+        0x0013    // SUB B, A
+      ]);
+      cpu.step();
+      cpu.step();
+      cpu.step();
+      expect(cpu.registers[0x01]).toEqual(0x0002);
+    });
+
+    it('sets O if an underflow occurs', function() {
+      var cpu = setupCpu([
+        0x9401,   // SET A, 5
+        0x8c11,   // SET B, 3
+        0x0013    // SUB B, A
+      ]);
+      cpu.step();
+      cpu.step();
+      cpu.step();
+      expect(cpu.registers[0x01]).toEqual(0xfffe);
+      expect(cpu.registers[0x1d]).toEqual(0xffff);
+    });
+  });
+
 });
