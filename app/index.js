@@ -18,7 +18,7 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu'], function(utility, Memo
     var text = '';
     var value;
     cpu.registers.forEach(function(registerValue, registerNumber) {
-      text += cpu.registerNames[registerNumber] + ': ' + utility.pad(registerValue.toString(16), 4) + ' (0b' + utility.pad(registerValue.toString(2), 16) + ', d' + registerValue.toString(10) + ')' + '\n';
+      text += utility.fillString(cpu.registerNames[registerNumber] + ': ', 6, ' ') + utility.pad(registerValue.toString(16), 4) + ' (0b' + utility.pad(registerValue.toString(2), 16) + ', d' + registerValue.toString(10) + ')' + '\n';
     });
     $("#registervalues").html(text);
 

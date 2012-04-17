@@ -4,6 +4,9 @@
     <script type="text/javascript" src="./vendor/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="./vendor/require-1.0.7/require.js" data-main="./app/index" ></script>
     <style>
+      body {
+        font-family: Verdana, Arial, sans-serif;
+      }
       .pre {
         font-family: "Courier New";
         white-space: pre;
@@ -12,11 +15,23 @@
         text-decoration: underline;
       }
       #hexprogram {
-
+        float: left;
+        margin: 20px;
+        width: 150px;
       }
       #hexinstructions {
-        width: 40px;
+        width: 140px;
         height: 200px;
+      }
+      #registers {
+        float: left;
+        margin: 20px;
+        width: 360px;
+      }
+      #memory {
+        float: left;
+        margin: 20px;
+        width: 440px;
       }
     </style>
   </head>
@@ -24,6 +39,7 @@
   <body>
 
     <div id="hexprogram">
+      Hex instructions:<br>
       <textarea id="hexinstructions">7c01
 002d
 91e1
