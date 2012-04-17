@@ -73,6 +73,18 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
       expect(memory.read(0x2005)).toEqual(0x0007);
     });
 
+    it('correctly resolves [<hex-address>]', function() {
+      var cpu = setupCpu([
+        0x91e1,   // SET [0x5000], 4
+        0x5000,
+        0x7801,   // SET A, [0x5000]
+        0x5000
+      ]);
+      cpu.step();
+      cpu.step();
+      expect(cpu.registers[0x00]).toEqual(0x0004);
+    });
+
     it('loops when setting the PC', function() {
       var cpu = setupCpu([
         0x8402,   // :loop ADD A, 1
