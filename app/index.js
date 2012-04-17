@@ -16,6 +16,7 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu'], function(utility, Memo
 
   var handleCpuStep = function() {
     var text = '';
+    var value;
     cpu.registers.forEach(function(registerValue, registerNumber) {
       text += cpu.registerNames[registerNumber] + ': ' + utility.pad(registerValue.toString(16), 4) + ' (0b' + utility.pad(registerValue.toString(2), 16) + ', d' + registerValue.toString(10) + ')' + '\n';
     });
@@ -32,13 +33,14 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu'], function(utility, Memo
       if (memoryBlockWritten) {
         text += '<b>' + utility.pad((j * 8).toString(16), 4) + ': </b>';
         for (var i = 0; i < 8; i++) {
+          value = memory.read((j * 8) + i);
           if (cpu.registers[0x1c] === ((j * 8) + i)) {
             text += '<span class="currentinstruction">';
           }
-          if (memory.read((j * 8) + i) > 0) {
-            text += '<b title="' + '0b' + utility.pad(memory.read((j * 8) + i).toString(2), 16) + ', d' + memory.read((j * 8) + i).toString(10) + '">';
+          if (value > 0) {
+            text += '<b title="' + '0b' + utility.pad(value.toString(2), 16) + ', d' + value.toString(10) + '">';
           }
-          text += utility.pad(memory.read((j * 8) + i).toString(16), 4);
+          text += utility.pad(value.toString(16), 4);
           if (memory.read((j * 8) + i) > 0) {
             text += '</b>';
           }
