@@ -3,11 +3,12 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
 define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
 
+  var memory;
   var setupCpu = function(instructions) {
     var wordsize = 0xFFFF;
     var numberOfWords = 0x10000;
 
-    var memory = new Memory(numberOfWords, wordsize, {
+    memory = new Memory(numberOfWords, wordsize, {
       read: function() {},
       write: function() {}
     });
@@ -267,7 +268,45 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
       }
       expect(cpu.registers[0x00]).toEqual(0x0008);
       expect(cpu.registers[0x01]).toEqual(0x0009);
-      expect(cpu.registers[0x1b]).toEqual(0xfffd); // SP is 0x0000 - 3
+      expect(cpu.registers[0x1b]).toEqual(0xfffe); // SP is 0x0000 - 2 (3 pushes - 1 pop)
+    });
+
+    it('works as expected, also around the memory border', function() {
+      var cpu = setupCpu([
+        0xa9a1,   // SET PUSH, 10
+        0xa5a1,   // SET PUSH, 9
+        0x6001,   // SET A, POP
+        0x6011   // SET B, POP
+      ]);
+      for (var i = 0; i < 6; i++) {
+        cpu.step();
+      }
+      expect(cpu.registers[0x00]).toEqual(0x0009);
+      expect(cpu.registers[0x01]).toEqual(0x000a);
+      expect(cpu.registers[0x1b]).toEqual(0x0000); // (2 pushes - 2 pops)
+    });
+  });
+
+  describe('JSR', function() {
+    it('pushes the address of the next instruction to the stack, then sets PC to a', function() {
+      var cpu = setupCpu([
+        0x7c10,   // JSR testsub
+        0x0005,   
+        0x9401,   // SET A, 5
+        0x7dc1,   // SET PC, end
+        0x0007,
+        0x9011,   // :testsub SET B, 4
+        0x61c1,   // SET PC, POP
+        0x8c21    // :end SET C, 3
+      ]);
+      for (var i = 0; i < 8; i++) {
+        cpu.step();
+      }
+      expect(cpu.registers[0x00]).toEqual(0x0005);
+      expect(cpu.registers[0x01]).toEqual(0x0004);
+      expect(cpu.registers[0x02]).toEqual(0x0003);
+      expect(cpu.registers[0x1b]).toEqual(0x0000); // SP
+      expect(memory.read(0xffff)).toEqual(0x0002); // Top of stack
     });
   });
 

@@ -93,3 +93,23 @@ a861
 9031
 7dc1
 0014
+
+
+
+
+
+JSR testsub
+SET A, 5
+SET PC, end
+:testsub SET B, 4
+SET PC, POP
+:end SET C, 3
+
+7c10
+0005
+9401
+7dc1
+0007
+9011
+61c1
+8c21
