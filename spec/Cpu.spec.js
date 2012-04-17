@@ -48,6 +48,21 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
       cpu.step();
       expect(cpu.registers[0x01]).toEqual(0x0005);
     });
+
+    it('loops when setting the PC', function() {
+      var cpu = setupCpu([
+        0x8402,   // :loop ADD A, 1
+        0x0011,   // SET B, A
+        0x7dc1,   // SET PC, loop
+        0x0000
+      ]);
+      for (var i = 0; i < 10; i++) {
+        cpu.step();
+      }
+      expect(cpu.registers[0x00]).toEqual(0x0004);
+      expect(cpu.registers[0x01]).toEqual(0x0003);
+      expect(cpu.registers[0x1c]).toEqual(0x0001);
+    });
   });
 
 
@@ -76,6 +91,7 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
       expect(cpu.registers[0x1d]).toEqual(0x0001);
     });
   });
+
 
   describe('SUB', function() {
     it('correctly substracts the value of a register from the value of another register', function() {
