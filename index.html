@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="./vendor/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="./vendor/require-1.0.7/require.js" data-main="./app/index" ></script>
+    <style>
+      .pre {
+        font-family: "Courier New";
+        white-space: pre;
+      }
+      .currentinstruction {
+        text-decoration: underline;
+      }
+      #hexprogram {
+
+      }
+      #hexinstructions {
+        width: 40px;
+        height: 200px;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <div id="hexprogram">
+      <textarea id="hexinstructions">7c01
+002d
+91e1
+000f</textarea>
+      <br>
+      <input id="reset" type="button" value="Reset + load code">
+      <input id="step" type="button" value="Step">
+      <input id="run" type="button" value="Run">
+    </div>
+
+    <div id="registers">
+      Registers:
+      <div id="registervalues" class="pre"></div>
+    </div>
+
+    <div id="memory">
+      Memory:
+      <div id="memoryvalues" class="pre"></div>
+    </div>
+  </body>
+</html>
