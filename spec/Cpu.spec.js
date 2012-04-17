@@ -24,10 +24,19 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
   }
 
   describe('SET', function() {
-    it('correctly sets a register', function() {
+    it('correctly sets a register to a small value', function() {
       var cpu = setupCpu([0x9401]); // SET A, 5
       cpu.step();
       expect(cpu.registers[0x00]).toEqual(0x0005);
+    });
+
+    it('correctly sets a register to a large value', function() {
+      var cpu = setupCpu([
+        0x7c01,   // SET A, 113
+        0x0071    //
+      ]);
+      cpu.step();
+      expect(cpu.registers[0x00]).toEqual(0x0071);
     });
 
     it('correctly sets a register to the value of another register', function() {
