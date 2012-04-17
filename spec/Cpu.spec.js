@@ -120,4 +120,37 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
     });
   });
 
+
+  describe('IFE', function() {
+    it('skips the next instruction if values are not equal', function() {
+      var cpu = setupCpu([
+        0x8c01,   // SET A, 3
+        0x9011,   // SET B, 4
+        0x040c,   // IFE A, B
+        0x9c11,   // SET B, 7
+        0xa401    // SET A, 9
+      ]);
+      for (var i = 0; i < 5; i++) {
+        cpu.step();
+      }
+      expect(cpu.registers[0x00]).toEqual(0x0009);
+      expect(cpu.registers[0x01]).toEqual(0x0004);
+    });
+
+    it('executes the next instruction if values are equal', function() {
+      var cpu = setupCpu([
+        0x8c01,   // SET A, 3
+        0x8c11,   // SET B, 3
+        0x040c,   // IFE A, B
+        0x9c11,   // SET B, 7
+        0xa401    // SET A, 9
+      ]);
+      for (var i = 0; i < 5; i++) {
+        cpu.step();
+      }
+      expect(cpu.registers[0x00]).toEqual(0x0009);
+      expect(cpu.registers[0x01]).toEqual(0x0007);
+    });
+  });
+
 });
