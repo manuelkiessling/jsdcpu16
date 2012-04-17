@@ -84,6 +84,9 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu'], function(utility, Memo
   };
 
   var reset = function() {
+    if (cpu !== undefined) {
+      cpu.stop();
+    }
     memory.reset();
     writtenMemoryBlocks = [];
     $("#registervalues").html('');
@@ -105,6 +108,12 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu'], function(utility, Memo
 
   $('#run').click(function() {
     cpu.run();
+  });
+
+  $('#stop').click(function() {
+    if (cpu !== undefined) {
+      cpu.stop();
+    }
   });
 
   reset();
