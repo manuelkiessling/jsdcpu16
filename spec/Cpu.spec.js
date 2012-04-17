@@ -50,6 +50,18 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
       expect(cpu.registers[0x01]).toEqual(0x0005);
     });
 
+    it('correctly resolves [register]', function() {
+      var cpu = setupCpu([
+        0x7c01,   // SET A, 0x8000
+        0x8000,
+        0x7c81,   // SET [A], 0x0001
+        0x0001
+      ]);
+      cpu.step();
+      cpu.step();
+      expect(memory.read(0x8000)).toEqual(0x0001);
+    });
+
     it('correctly resolves a "next word + register"', function() {
       var cpu = setupCpu([
         0x9401,   // SET A, 5
