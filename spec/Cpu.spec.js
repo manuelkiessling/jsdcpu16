@@ -24,6 +24,7 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
     return cpu;
   }
 
+
   describe('SET', function() {
     it('correctly sets a register to a small value', function() {
       var cpu = setupCpu([0x9401]); // SET A, 5
@@ -156,6 +157,7 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
     });
   });
 
+
   describe('MUL', function() {
     it('works with small values', function() {
       var cpu = setupCpu([
@@ -179,6 +181,7 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
       expect(cpu.registers[0x1d]).toEqual(0x0002);
     });
   });
+
 
   describe('DIV', function() {
     it('works common values', function() {
@@ -228,6 +231,7 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
     });
   });
 
+
   describe('MOD', function() {
     it('works with common values, remainder', function() {
       var cpu = setupCpu([
@@ -259,6 +263,7 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
       expect(cpu.registers[0x00]).toEqual(0x0000);
     });
   });
+
 
   describe('IFE', function() {
     it('skips the next instruction if values are not equal', function() {
@@ -292,6 +297,7 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
     });
   });
 
+
   describe('IFN', function() {
     it('skips the next instruction if values are equal', function() {
       var cpu = setupCpu([
@@ -323,6 +329,7 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
       expect(cpu.registers[0x01]).toEqual(0x0007);
     });
   });
+
 
 
   describe('IFG', function() {
@@ -390,7 +397,7 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
     });
   });
 
-  
+
   describe('Stack pointer', function() {
     it('works as expected', function() {
       var cpu = setupCpu([
@@ -425,6 +432,7 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
     });
   });
 
+
   describe('JSR', function() {
     it('pushes the address of the next instruction to the stack, then sets PC to a', function() {
       var cpu = setupCpu([
@@ -447,6 +455,7 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
       expect(memory.read(0xffff)).toEqual(0x0002); // Top of stack
     });
   });
+
 
   describe('the offical sample application', function() {
     it('ends with X == 0x40 after 48 cycles', function() {
