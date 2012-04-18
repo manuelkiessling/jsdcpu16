@@ -6,12 +6,14 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './console'], function(
   var memory;
   var wordsize;
   var numberOfWords;
+  var accessedMemoryBlocks = [];
 
-  var handleMemoryRead = function(address, value) {};
+  var handleMemoryRead = function(address, value) {
+    accessedMemoryBlocks[address] = value;
+  };
 
-  var writtenMemoryBlocks = [];
   var handleMemoryWrite = function(address, value) {
-    writtenMemoryBlocks[address] = value;
+    accessedMemoryBlocks[address] = value;
     if (address >= 0x8000 && address <= 0x8200) {
       terminal.draw($('#consoleoutput'), memory, 0x8000);
     }
@@ -26,14 +28,14 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './console'], function(
     $("#registervalues").html(text);
 
     text = '';
-    var memoryBlockWritten = false;
+    var memoryBlockAccessed = false;
     for (var j = 0; j < numberOfWords / 8; j++) {
       for (var i = 0; i < 8; i++) {
-        if (writtenMemoryBlocks[(j * 8) + i] > 0) {
-          memoryBlockWritten = true;
+        if (accessedMemoryBlocks[(j * 8) + i] !== undefined) {
+          memoryBlockAccessed = true;
         }
       }
-      if (memoryBlockWritten) {
+      if (memoryBlockAccessed) {
         text += '<b>' + utility.pad((j * 8).toString(16), 4) + ': </b>';
         for (var i = 0; i < 8; i++) {
           value = memory.read((j * 8) + i);
@@ -54,7 +56,7 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './console'], function(
         }
         text += '\n';
       }
-      memoryBlockWritten = false;
+      memoryBlockAccessed = false;
     }
     $("#memoryvalues").html(text);
   };
@@ -92,7 +94,7 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './console'], function(
     }
     memory.reset();
     terminal.draw($('#consoleoutput'), memory, 0x8000);
-    writtenMemoryBlocks = [];
+    accessedMemoryBlocks = [];
     $("#registervalues").html('');
     $("#memoryvalues").html('');
     load(memory, getInstructions($('#hexinstructions')));
