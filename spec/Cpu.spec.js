@@ -34,7 +34,7 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
     it('correctly sets a register to a large value', function() {
       var cpu = setupCpu([
         0x7c01,   // SET A, 113
-        0x0071    //
+        0x0071
       ]);
       cpu.step();
       expect(cpu.registers[0x00]).toEqual(0x0071);
@@ -414,7 +414,7 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
         0xa9a1,   // SET PUSH, 10
         0xa5a1,   // SET PUSH, 9
         0x6001,   // SET A, POP
-        0x6011   // SET B, POP
+        0x6011    // SET B, POP
       ]);
       for (var i = 0; i < 6; i++) {
         cpu.step();
