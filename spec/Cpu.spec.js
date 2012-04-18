@@ -448,4 +448,46 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
     });
   });
 
+  describe('the offical sample application', function() {
+    it('ends with X == 0x40 after 48 cycles', function() {
+      var cpu = setupCpu([
+        0x7c01,   // SET A 0x30
+        0x0030,
+        0x7de1,   // SET [0x1000] 0x20
+        0x1000,
+        0x0020,
+        0x7803,   // SUB A [0x1000]
+        0x1000,
+        0xc00d,   // IFN A 0x10
+        0x7dc1,   // SET PC crash
+        0x001a,
+        0xa861,   // SET I 10
+        0x7c01,   // SET A 0x2000
+        0x2000,
+        0x2161,   // :loop SET [0x2000+I] [A]
+        0x2000,
+        0x8463,   // SUB I 1
+        0x806d,   // IFN I 0
+        0x7dc1,   // SET PC loop
+        0x000d,
+        0x9031,   // SET X 0x4
+        0x7c10,   // JSR testsub
+        0x0018,
+        0x7dc1,   // SET PC crash
+        0x001a,
+        0x9037,   // :testsub SHL X 4
+        0x61c1,   // SET PC POP
+        0x7dc1,   // :crash SET PC crash
+        0x001a
+      ]);
+      for (var i = 0; i < 48; i++) {
+        cpu.step();
+      }
+      expect(cpu.registers[0x00]).toEqual(0x2000);
+      expect(cpu.registers[0x03]).toEqual(0x0040);
+      expect(cpu.memory.read(0x1000)).toEqual(0x0020);
+      expect(cpu.memory.read(0xffff)).toEqual(0x0016);
+    });
+  });
+
 });

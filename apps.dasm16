@@ -68,37 +68,44 @@ d001
 
         ; Call a subroutine
                       SET X, 0x4               ; 9031
-; Hang forever. X should now be 0x40 if everything went right.
+                      JSR testsub              ; 7c10 0018 [*]
+                      SET PC, crash            ; 7dc1 001a [*]
+
+        :testsub      SHL X, 4                 ; 9037
+                      SET PC, POP              ; 61c1
+
+        ; Hang forever. X should now be 0x40 if everything went right.
         :crash        SET PC, crash            ; 7dc1 001a [*]
 
-7c01
+7c01  0000  SET A 0x30
 0030
-7de1
+7de1  0002  SET [0x1000] 0x20
 1000
 0020
-7803
+7803  0005  SUB A [0x1000]
 1000
-c00d
-7dc1
+c00d  0007  IFN A 0x10
+7dc1  0008  SET PC crash
 001a
-a861
-7c01
+a861  000a  SET I 10
+7c01  000b  SET A 0x2000
 2000
-2161
+2161  000d  :loop SET [0x2000+I] [A]
 2000
-8463
-806d
-7dc1
+8463  000f  SUB I 1
+806d  0010  IFN I 0
+7dc1  0011  SET PC loop
 000d
-9031
-7c10
+9031  0013  SET X 0x4
+7c10  0014  JSR testsub
 0018
-7dc1
+7dc1  0016  SET PC crash
 001a
-9037
-61c1
-7dc1
+9037  0018  :testsub SHL X 4
+61c1  0019  SET PC POP
+7dc1  001a  :crash SET PC crash
 001a
+
 
 
 
