@@ -180,6 +180,41 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
     });
   });
 
+  describe('DIV', function() {
+    it('works common values', function() {
+      var cpu = setupCpu([
+        0x9801,   // SET A, 6
+        0x8805    // DIV A, 2
+      ]);
+      cpu.step();
+      cpu.step();
+      expect(cpu.registers[0x00]).toEqual(0x0003);
+      expect(cpu.registers[0x1d]).toEqual(0x0000);
+    });
+
+    it('floors and sets O if division yields a modulo, a>b', function() {
+      var cpu = setupCpu([
+        0x9801,   // SET A, 6
+        0x9405    // DIV A, 5
+      ]);
+      cpu.step();
+      cpu.step();
+      expect(cpu.registers[0x00]).toEqual(0x0001);
+      expect(cpu.registers[0x1d]).toEqual(0x3333);
+    });
+
+    it('floors and sets O if division yields a modulo, b>a', function() {
+      var cpu = setupCpu([
+        0x9801,   // SET A, 6
+        0xac05    // DIV A, 11
+      ]);
+      cpu.step();
+      cpu.step();
+      expect(cpu.registers[0x00]).toEqual(0x0000);
+      expect(cpu.registers[0x1d]).toEqual(0x8ba2);
+    });
+  });
+
   describe('IFE', function() {
     it('skips the next instruction if values are not equal', function() {
       var cpu = setupCpu([
