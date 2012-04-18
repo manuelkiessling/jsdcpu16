@@ -156,6 +156,29 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
     });
   });
 
+  describe('MUL', function() {
+    it('works with small values', function() {
+      var cpu = setupCpu([
+        0x8c01,   // SET A, 3
+        0x9404    // MUL A, 5
+      ]);
+      cpu.step();
+      cpu.step();
+      expect(cpu.registers[0x00]).toEqual(0x000f);
+    });
+
+    it('sets O if an overflow occurs', function() {
+      var cpu = setupCpu([
+        0x8c01,   // SET A, 3
+        0x7c04,   // MUL A, 65535
+        0xffff
+      ]);
+      cpu.step();
+      cpu.step();
+      expect(cpu.registers[0x00]).toEqual(0xfffd);
+      expect(cpu.registers[0x1d]).toEqual(0x0002);
+    });
+  });
 
   describe('IFE', function() {
     it('skips the next instruction if values are not equal', function() {
