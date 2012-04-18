@@ -213,6 +213,19 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
       expect(cpu.registers[0x00]).toEqual(0x0000);
       expect(cpu.registers[0x1d]).toEqual(0x8ba2);
     });
+
+    it('sets target and O to 0 if source is zero', function() {
+      var cpu = setupCpu([
+        0x9801,   // SET A, 6
+        0x8805,   // DIV A, 2
+        0x8005    // DIV A, 0
+      ]);
+      cpu.step();
+      cpu.step();
+      cpu.step();
+      expect(cpu.registers[0x00]).toEqual(0x0000);
+      expect(cpu.registers[0x1d]).toEqual(0x0000);
+    });
   });
 
   describe('IFE', function() {
