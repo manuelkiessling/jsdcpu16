@@ -72,9 +72,15 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './console'], function(
   var getInstructions = function(element) {
     var text = element.val();
     var lines = text.split('\n');
+    var instruction;
     var instructions = [];
     lines.forEach(function(line) {
       line = line.trim();
+      instruction = line.substring(0, 6);
+      instruction = instruction.toLowerCase();
+      if (instruction.substring(2, 1) !== 'x') {
+        instruction = instruction.substring(0, 4);
+      }
       instructions.push(parseInt(line, 16));
     });
     return instructions;
