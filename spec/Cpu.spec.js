@@ -228,6 +228,38 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
     });
   });
 
+  describe('MOD', function() {
+    it('works with common values, remainder', function() {
+      var cpu = setupCpu([
+        0x9801,   // SET A, 6
+        0x9406    // MOD A, 5
+      ]);
+      cpu.step();
+      cpu.step();
+      expect(cpu.registers[0x00]).toEqual(0x0001);
+    });
+
+    it('works with common values, no remainder', function() {
+      var cpu = setupCpu([
+        0x9801,   // SET A, 6
+        0x8c06    // MOD A, 3
+      ]);
+      cpu.step();
+      cpu.step();
+      expect(cpu.registers[0x00]).toEqual(0x0000);
+    });
+
+    it('sets target to 0 if source is 0', function() {
+      var cpu = setupCpu([
+        0x9801,   // SET A, 6
+        0x8006    // MOD A, 0
+      ]);
+      cpu.step();
+      cpu.step();
+      expect(cpu.registers[0x00]).toEqual(0x0000);
+    });
+  });
+
   describe('IFE', function() {
     it('skips the next instruction if values are not equal', function() {
       var cpu = setupCpu([
