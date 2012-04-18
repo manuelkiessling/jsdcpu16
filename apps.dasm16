@@ -120,3 +120,82 @@ SET PC, POP
 9011
 61c1
 8c21
+
+
+
+
+
+
+
+
+
+
+
+
+;pseudorandom a.k.a. ASCII barf
+;Author: Gleesus
+
+;A - position to write to
+SET A, 0x01f1
+
+;B - char code to write to A
+SET B, 0x22
+
+:print
+SET [0x8000+A], B
+
+; A = ((65521 * A + 57143) % 512)
+MUL A, 0xfff1
+ADD A, 0xdf37
+MOD A, 0x0200
+
+
+; Increment B, but keep it
+; within the printable ASCII chars
+ADD B, 0x01
+IFE B, 0x7f
+   SET B, 0x21
+
+SET PC, print
+
+
+
+7c01  0000  SET A 0x01f1
+01f1
+7c11  0002  SET B 0x22
+0022
+0501  0004  :print SET [0x8000+A] B
+8000
+7c04  0006  MUL A 0xfff1
+fff1
+7c02  0008  ADD A 0xdf37
+df37
+7c06  000a  MOD A 0x0200
+0200
+8412  000c  ADD B 0x01
+7c1c  000d  IFE B 0x7f
+007f
+7c11  000f  SET B 0x21
+0021
+7dc1  0011  SET PC print
+0004
+
+7c01
+01f1
+7c11
+0022
+0501
+8000
+7c04
+fff1
+7c02
+df37
+7c06
+0200
+8412
+7c1c
+007f
+7c11
+0021
+7dc1
+0004
