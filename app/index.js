@@ -81,7 +81,9 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './console'], function(
       if (instruction.substring(2, 1) !== 'x') {
         instruction = instruction.substring(0, 4);
       }
-      instructions.push(parseInt(line, 16));
+      if (instruction !== '') {
+        instructions.push(parseInt(line, 16));
+      }
     });
     return instructions;
   };
