@@ -430,6 +430,34 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
       expect(cpu.registers[0x01]).toEqual(0x000a);
       expect(cpu.registers[0x1b]).toEqual(0x0000); // (2 pushes - 2 pops)
     });
+
+    it('works when PUSHing a POP', function() {
+      var cpu = setupCpu([
+        0xa9a1,   // SET PUSH, 10
+        0xa5a1,   // SET PUSH, 9
+        0x61a1,   // SET PUSH, POP
+        0x6011    // SET B, POP
+      ]);
+      for (var i = 0; i < 6; i++) {
+        cpu.step();
+      }
+      expect(cpu.registers[0x01]).toEqual(0x0009);
+      expect(cpu.registers[0x1b]).toEqual(0xffff); // (3 pushes - 1 pops)
+    });
+
+    it('works when POPing a PUSH', function() {
+      var cpu = setupCpu([
+        0xa9a1,   // SET PUSH, 10
+        0xa5a1,   // SET PUSH, 9
+        0x6981,   // SET POP, PUSH
+        0x6011    // SET B, POP
+      ]);
+      for (var i = 0; i < 6; i++) {
+        cpu.step();
+      }
+      expect(cpu.registers[0x01]).toEqual(0x0000);
+      expect(cpu.registers[0x1b]).toEqual(0xffff); // (3 pushes - 1 pops)
+    });
   });
 
 
