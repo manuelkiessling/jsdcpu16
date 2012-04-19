@@ -489,7 +489,7 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
         0x7dc1,   // :crash SET PC crash
         0x001a
       ]);
-      for (var i = 0; i < 48; i++) {
+      for (var i = 0; i < 50; i++) {
         cpu.step();
       }
       expect(cpu.registers[0x00]).toEqual(0x2000);
