@@ -35,6 +35,7 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './console'], function(
     });
     text += utility.fillString('Steps: ', 6, ' ') + utility.pad(cpu.stepNumber, 8) + '\n';
     $("#registervalues").html(text);
+    return;
     text = '';
     var memoryBlockAccessed = false;
     for (var j = 0; j < numberOfWords / 8; j++) {

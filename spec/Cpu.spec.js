@@ -282,6 +282,19 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
     });
   });
 
+  describe('SHL', function() {
+    it('handles overflow correctly', function() {
+      var cpu = setupCpu([
+        0x7c21,  // SET C 0xffff
+        0xffff,
+        0xa027   // SHL C 2
+      ]);
+      cpu.step();
+      cpu.step();
+      expect(cpu.registers[0x02]).toEqual(0xff00);
+      expect(cpu.registers[0x1d]).toEqual(0x00ff);
+    });
+  });
 
   describe('IFE', function() {
     it('skips the next instruction if values are not equal', function() {
