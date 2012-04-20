@@ -2,22 +2,30 @@
 
 define([], function() {
 
-  var draw = function(element, memory, startAddress) {
-    var content = '';
-    var string;
-    for (var row = 0; row < 12; row++) {
-      for (var col = 0; col < 32; col++) {
-        string = String.fromCharCode(memory.read(startAddress + (row * 32) + col));
-        if (string == String.fromCharCode(0)) {
-          string = ' ';
-        }
-        content += string;
+  var Terminal = function(element, startAdress, numRows, numCols) {
+    this.element = element;
+    this.startAdress = startAdress;
+    this.content = '';
+    this.numCols = numCols;
+
+    for (var row = 0; row < numRows; row++) {
+      for (var col = 0; col < numCols; col++) {
+        this.content += ' ';
       }
-      content += '\n';
+      this.content += '\n';
     }
-    element.html(content);
   };
 
-  return { draw: draw };
+  Terminal.prototype.draw = function(address, value) {
+    var position = address - this.startAdress;
+    var row = Math.floor(position / this.numCols);
+    position = position + row; // every row adds one \n character
+    this.content = this.content.substr(0, position + 2) +
+                   String.fromCharCode(value) +
+                   this.content.substr(position + 3);
+    this.element.html(this.content);
+  };
+
+  return Terminal;
 
 });

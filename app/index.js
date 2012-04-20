@@ -1,32 +1,40 @@
 "use strict";
 
-define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './console'], function(utility, Memory, Cpu, terminal) {
+define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './console'], function(utility, Memory, Cpu, Terminal) {
 
   var cpu;
   var memory;
   var wordsize;
   var numberOfWords;
   var accessedMemoryBlocks = [];
+  var runInterval;
 
   var handleMemoryRead = function(address, value) {
     accessedMemoryBlocks[address] = value;
   };
 
+  var terminal = new Terminal($('#consoleoutput'), 0x8000, 12, 32);
+
   var handleMemoryWrite = function(address, value) {
     accessedMemoryBlocks[address] = value;
     if (address >= 0x8000 && address <= 0x817f) {
-      terminal.draw($('#consoleoutput'), memory, 0x8000);
+      terminal.draw(address, value);
     }
   };
 
   var handleCpuStep = function() {
+    //
+  };
+
+  var updateRegisterAndMemoryInfo = function() {
+    //return;
     var text = '';
     var value;
     cpu.registers.forEach(function(registerValue, registerNumber) {
       text += utility.fillString(cpu.registerNames[registerNumber] + ': ', 6, ' ') + utility.pad(registerValue.toString(16), 4) + ' (0b' + utility.pad(registerValue.toString(2), 16) + ', d' + registerValue.toString(10) + ')' + '\n';
     });
+    text += utility.fillString('Steps: ', 6, ' ') + utility.pad(cpu.stepNumber, 8) + '\n';
     $("#registervalues").html(text);
-
     text = '';
     var memoryBlockAccessed = false;
     for (var j = 0; j < numberOfWords / 8; j++) {
@@ -109,7 +117,7 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './console'], function(
     cpu = new Cpu(memory, {
       step: handleCpuStep
     });
-    handleCpuStep();
+    updateRegisterAndMemoryInfo();
   };
 
   $('#reset').click(function() {
@@ -118,13 +126,18 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './console'], function(
 
   $('#step').click(function() {
     cpu.step();
+    updateRegisterAndMemoryInfo();
   });
 
   $('#run').click(function() {
+    runInterval = setInterval(function() {
+      updateRegisterAndMemoryInfo();
+    }, 1000);
     cpu.run();
   });
 
   $('#stop').click(function() {
+    clearInterval(runInterval);
     if (cpu !== undefined) {
       cpu.stop();
     }
