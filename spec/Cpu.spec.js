@@ -296,6 +296,21 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
     });
   });
 
+  describe('SHR', function() {
+    it('handles overflow correctly', function() {
+      var cpu = setupCpu([
+        0x7c21,  // SET C, 0xffff
+        0xffff,
+        0x7c28,   // SHR C, 0xffff
+        0xffff
+      ]);
+      cpu.step();
+      cpu.step();
+      expect(cpu.registers[0x02]).toEqual(0x0000);
+      expect(cpu.registers[0x1d]).toEqual(0xffff);
+    });
+  });
+
   describe('IFE', function() {
     it('skips the next instruction if values are not equal', function() {
       var cpu = setupCpu([
