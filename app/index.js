@@ -14,7 +14,7 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './console'], function(
 
   var handleMemoryWrite = function(address, value) {
     accessedMemoryBlocks[address] = value;
-    if (address >= 0x8000 && address <= 0x8180) {
+    if (address >= 0x8000 && address <= 0x817f) {
       terminal.draw($('#consoleoutput'), memory, 0x8000);
     }
   };
