@@ -1,6 +1,6 @@
 "use strict";
 
-define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './console'], function(utility, Memory, Cpu, Terminal) {
+define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './Terminal'], function(utility, Memory, Cpu, Terminal) {
 
   var cpu;
   var memory;
@@ -110,7 +110,6 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './console'], function(
       cpu.stop();
     }
     memory.reset();
-    terminal.draw($('#consoleoutput'), memory, 0x8000);
     accessedMemoryBlocks = [];
     $("#registervalues").html('');
     $("#memoryvalues").html('');
