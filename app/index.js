@@ -1,6 +1,6 @@
 "use strict";
 
-define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './Terminal'], function(utility, Memory, Cpu, Terminal) {
+define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './Terminal', './Keyboard'], function(utility, Memory, Cpu, Terminal, Keyboard) {
 
   var cpu;
   var memory;
@@ -10,7 +10,7 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './Terminal'], function
   var runInterval;
 
   var handleMemoryRead = function(address, value) {
-    accessedMemoryBlocks[address] = value;
+    //accessedMemoryBlocks[address] = value;
   };
 
   var terminal = new Terminal($('#consoleoutput'), 0x8000, 12, 32);
@@ -31,11 +31,14 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './Terminal'], function
     var text = '';
     var value;
     cpu.registers.forEach(function(registerValue, registerNumber) {
+      if (registerValue === null) {
+        console.log('rNull' + cpu.registerNames[registerNumber]);
+      }
       text += utility.fillString(cpu.registerNames[registerNumber] + ': ', 6, ' ') + utility.pad(registerValue.toString(16), 4) + ' (0b' + utility.pad(registerValue.toString(2), 16) + ', d' + registerValue.toString(10) + ')' + '\n';
     });
     text += utility.fillString('Steps: ', 6, ' ') + utility.pad(cpu.stepNumber, 8) + '\n';
     $("#registervalues").html(text);
-    return;
+    //return;
     text = '';
     var memoryBlockAccessed = false;
     for (var j = 0; j < numberOfWords / 8; j++) {
@@ -114,6 +117,7 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './Terminal'], function
     $("#registervalues").html('');
     $("#memoryvalues").html('');
     load(memory, getInstructions($('#hexinstructions')));
+    var keyboard = new Keyboard($('body'), memory);
     cpu = new Cpu(memory, {
       step: handleCpuStep
     });
