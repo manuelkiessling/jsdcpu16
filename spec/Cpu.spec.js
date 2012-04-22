@@ -81,7 +81,7 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
       expect(memory.read(0x1000)).toEqual(0x0001);
     });
 
-    it('correctly resolves a "next word + register"', function() {
+    it('correctly resolves "next word + register" in target', function() {
       var cpu = setupCpu([
         0x9401,   // SET A, 5
         0x9d01,   // SET [0x2000+A], 7
@@ -90,6 +90,20 @@ define(['../lib/Memory', '../lib/Cpu'], function(Memory, Cpu) {
       cpu.step();
       cpu.step();
       expect(memory.read(0x2005)).toEqual(0x0007);
+    });
+
+    it('correctly resolves "next word + register" in source', function() {
+      var cpu = setupCpu([
+        0x9001,   // SET A, 4
+        0x95e1,   // SET [0x1004], 5
+        0x1004,
+        0x4011,   // SET B, [0x1000+A]
+        0x1000
+      ]);
+      cpu.step();
+      cpu.step();
+      cpu.step();
+      expect(cpu.registers[0x01]).toEqual(0x0005);
     });
 
     it('correctly resolves [<hex-address>]', function() {
