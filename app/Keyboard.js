@@ -13,11 +13,16 @@ define([], function() {
   };
 
   var Keyboard = function(element, memory) {
-    var index = 0;
+    this.index = 0;
+    var that = this;
     element.on('keypress', function(e) {
-      memory.write(0x9000 + index, e.which);
-      index = increaseIndex(index);
+      memory.write(0x9000 + that.index, e.which);
+      that.index = increaseIndex(that.index);
     });
+  };
+
+  Keyboard.prototype.reset = function() {
+    this.index = 0;
   };
 
   return Keyboard;

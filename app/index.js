@@ -4,6 +4,8 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './Terminal', './Keyboa
 
   var cpu;
   var memory;
+  var keyboard;
+  var terminal;
   var wordsize;
   var numberOfWords;
   var accessedMemoryBlocks = [];
@@ -12,8 +14,6 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './Terminal', './Keyboa
   var handleMemoryRead = function(address, value) {
     //accessedMemoryBlocks[address] = value;
   };
-
-  var terminal = new Terminal($('#consoleoutput'), 0x8000, 12, 32);
 
   var handleMemoryWrite = function(address, value) {
     accessedMemoryBlocks[address] = value;
@@ -81,6 +81,8 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './Terminal', './Keyboa
     write: handleMemoryWrite
   });
 
+  keyboard = new Keyboard($('body'), memory);
+
   var getInstructions = function(element) {
     var text = element.val();
     var lines = text.split('\n');
@@ -109,6 +111,7 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './Terminal', './Keyboa
   };
 
   var reset = function() {
+    keyboard.reset();
     if (cpu !== undefined) {
       cpu.stop();
     }
@@ -117,11 +120,11 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './Terminal', './Keyboa
     $("#registervalues").html('');
     $("#memoryvalues").html('');
     load(memory, getInstructions($('#hexinstructions')));
-    var keyboard = new Keyboard($('body'), memory);
     cpu = new Cpu(memory, {
       step: handleCpuStep
     });
     updateRegisterAndMemoryInfo();
+    terminal = new Terminal($('#consoleoutput'), 0x8000, 12, 32);
   };
 
   $('#reset').click(function() {

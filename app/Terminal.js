@@ -3,6 +3,7 @@
 define([], function() {
 
   var Terminal = function(element, startAdress, numRows, numCols) {
+    element.html('');
     this.element = element;
     this.startAdress = startAdress;
     this.numRows = numRows;
