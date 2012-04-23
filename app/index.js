@@ -1,11 +1,12 @@
 "use strict";
 
-define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './Terminal', './Keyboard'], function(utility, Memory, Cpu, Terminal, Keyboard) {
+define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './Terminal', './Keyboard', './NetworkInterfaceCard'], function(utility, Memory, Cpu, Terminal, Keyboard, Nic) {
 
   var cpu;
   var memory;
   var keyboard;
   var terminal;
+  var nic;
   var wordsize;
   var numberOfWords;
   var accessedMemoryBlocks = [];
@@ -19,6 +20,9 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './Terminal', './Keyboa
     accessedMemoryBlocks[address] = value;
     if (address >= 0x8000 && address <= 0x817f) {
       terminal.draw(address, value);
+    }
+    if (address >= 0x6080 && address <= 0x60ff) {
+      nic.handleOutgoing(address);
     }
   };
 
@@ -82,6 +86,7 @@ define(['../lib/utility', '../lib/Memory', '../lib/Cpu', './Terminal', './Keyboa
   });
 
   keyboard = new Keyboard($('body'), memory);
+  nic = new Nic(utility.getUrlParameter('hubId', window.location.href), memory);
 
   var getInstructions = function(element) {
     var text = element.val();
