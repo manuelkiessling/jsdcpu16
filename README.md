@@ -5,7 +5,7 @@ JavaScript implementation of the virtual DCPU-16 for the game 0x10c
 ## Demo
 
 You can play around with this emulator at
-http://bivouac.kiessling.net/jsDCPU16
+http://manuel.kiessling.net/jsDCPU16
 
 All registers and opcodes, including JSR, are implemented, but expect
 smaller glitches.
