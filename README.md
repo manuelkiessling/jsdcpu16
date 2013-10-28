@@ -1,4 +1,7 @@
 # jsDCPU16
+
+[![Build Status](https://travis-ci.org/manuelkiessling/jsDCPU16.png?branch=master)](https://travis-ci.org/manuelkiessling/jsDCPU16)
+
 JavaScript implementation of the virtual DCPU-16 for the game 0x10c
 
 
